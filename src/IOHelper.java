@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 public class IOHelper {
+
     /**
      * Reads tweets from given file.
      * The expected format is id\ttext.
@@ -20,5 +21,23 @@ public class IOHelper {
             System.out.println("Error while getting tweets from " + filePath);
         }
         return tweets;
+    }
+
+    /**
+     * Reads words from given file.
+     * The expected format is one word per line.
+     * Returns an ArrayList of Strings.
+     */
+    public static ArrayList<String> readWords(String filePath) {
+        ArrayList<String> words = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                words.add(line);
+            }
+        } catch (Exception e) {
+            System.out.println("Error while getting words from " + filePath);
+        }
+        return words;
     }
 }
