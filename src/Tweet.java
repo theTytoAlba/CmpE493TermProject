@@ -15,6 +15,7 @@ public class Tweet {
 
     /**
      * Returns the bagOfWords map. Creates it if not created yet.
+     * Map is in form <word: # of times or occurs>
      */
     public HashMap<String, Integer> getBagOfWords() {
         // If bag of words is not calculated yet, calculate it.
@@ -30,5 +31,17 @@ public class Tweet {
             }
         }
         return bagOfWords;
+    }
+
+    /**
+     * Creates and returns a deep copy of this tweet.
+     */
+    public Tweet getCopy() {
+        Tweet copy = new Tweet(id, text, category);
+        copy.bagOfWords = new HashMap<>();
+        for (String word : bagOfWords.keySet()) {
+            copy.bagOfWords.put(word, bagOfWords.get(word));
+        }
+        return copy;
     }
 }
