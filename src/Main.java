@@ -12,7 +12,6 @@ public class Main {
 
     /**
      * Divides the existing set into 11 sets.
-     * 10 of them is going to be used as TRAINING and the other one as TESTING.
      *
      * 10 sets contain:
      * - 171 positive test,
