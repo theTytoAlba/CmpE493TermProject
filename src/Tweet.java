@@ -39,7 +39,7 @@ public class Tweet {
     public Tweet getCopy() {
         Tweet copy = new Tweet(id, text, category);
         copy.bagOfWords = new HashMap<>();
-        for (String word : bagOfWords.keySet()) {
+        for (String word : getBagOfWords().keySet()) {
             copy.bagOfWords.put(word, bagOfWords.get(word));
         }
         return copy;
