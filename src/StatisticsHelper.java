@@ -158,7 +158,7 @@ public class StatisticsHelper {
                 stats[2][3] += 1;
             }
         }
-
+        // positive word count
         for (Tweet t : positiveWordCount.keySet()){
             if (positiveWordCount.get(t) == 1 ){
                 tweetStats[0][0] += 1;
@@ -192,6 +192,40 @@ public class StatisticsHelper {
                 tweetStats[0][3] += 1;
             }
         }
+        //negative word count
+        for (Tweet t : negativeWordCount.keySet()){
+            if (negativeWordCount.get(t) == 1 ){
+                tweetStats[1][0] += 1;
+            }else if (negativeWordCount.get(t) == 2){
+                tweetStats[1][1] += 1;
+            }else if (negativeWordCount.get(t) == 3){
+                tweetStats[1][2] += 1;
+            }else if (negativeWordCount.get(t) > 3){
+                tweetStats[1][3] += 1;
+            }
+        }
+        for (Tweet t : negativeWordCountNegativeSet.keySet()){
+            if (negativeWordCountNegativeSet.get(t) == 1 ){
+                tweetStats[1][0] += 1;
+            }else if (negativeWordCountNegativeSet.get(t) == 2){
+                tweetStats[1][1] += 1;
+            }else if (negativeWordCountNegativeSet.get(t) == 3){
+                tweetStats[1][2] += 1;
+            }else if (negativeWordCountNegativeSet.get(t) > 3){
+                tweetStats[1][3] += 1;
+            }
+        }
+        for (Tweet t : negativeWordCountNotrSet.keySet()){
+            if (negativeWordCountNotrSet.get(t) == 1 ){
+                tweetStats[1][0] += 1;
+            }else if (negativeWordCountNotrSet.get(t) == 2){
+                tweetStats[1][1] += 1;
+            }else if (negativeWordCountNotrSet.get(t) == 3){
+                tweetStats[1][2] += 1;
+            }else if (negativeWordCountNotrSet.get(t) > 3){
+                tweetStats[1][3] += 1;
+            }
+        }
         System.out.println("Stats : \t Cont.Pos \t NotCnt.Pos \t Cont.Neg \t NotCnt.Neg");
         for (int i = 0 ; i<3;i++){
             switch (i){
@@ -210,7 +244,10 @@ public class StatisticsHelper {
             }
             System.out.println();
         }
-        System.out.println("Positive word count stats");
+        System.out.println("Positive word count stats,Bir tweette bir tane pozitif kelime bulunanlar, iki tane olanlar, 3 tane olanlar 3 ve ustu..");
         System.out.println(Arrays.toString(tweetStats[0]));
+        System.out.println("Negative word count stats,Bir tweette bir tane negative kelime bulunanlar, iki tane olanlar, 3 tane olanlar 3 ve ustu..");
+        System.out.println(Arrays.toString(tweetStats[1]));
+
     }
 }
