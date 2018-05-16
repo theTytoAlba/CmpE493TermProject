@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Classifier {
@@ -74,26 +75,31 @@ public class Classifier {
         }
 
         // Find total unique word count.
-        Set<String> words = p_given_pos.keySet();
-        words.addAll(p_given_neg.keySet());
-        words.addAll(p_given_not.keySet());
+        HashSet<String> words = new HashSet<>();
+        for (String word : p_given_pos.keySet())
+            words.add(word);
+        for (String word : p_given_neg.keySet())
+            words.add(word);
+        for (String word : p_given_not.keySet())
+            words.add(word);
         int totalWordCount = words.size();
 
         // Finalize probabilities.
         for (String word : p_given_pos.keySet()) {
             p_given_pos.put(word, (p_given_pos.get(word) + 1) / (wordCountPos + totalWordCount));
         }
-        double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);
 
         for (String word : p_given_neg.keySet()) {
             p_given_neg.put(word, (p_given_neg.get(word) + 1) / (wordCountNeg + totalWordCount));
         }
-        double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);
 
         for (String word : p_given_not.keySet()) {
             p_given_not.put(word, (p_given_not.get(word) + 1) / (wordCountNot + totalWordCount));
         }
+
         double p_notpresent_not = 1.0 / (wordCountNot + totalWordCount);
+        double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);
+        double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);
 
         // Classify!
         int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
@@ -109,7 +115,7 @@ public class Classifier {
             }
 
             // Calculate negative probability.
-            double p_neg = Math.log10(p_class_pos);
+            double p_neg = Math.log10(p_class_neg);
             for (String word : t.getBagOfWords().keySet()) {
                 if (p_given_neg.containsKey(word)) {
                     p_neg += Math.log10(p_given_neg.get(word)) * t.getBagOfWords().get(word);
@@ -119,7 +125,7 @@ public class Classifier {
             }
 
             // Calculate notr probability.
-            double p_not = Math.log10(p_class_pos);
+            double p_not = Math.log10(p_class_not);
             for (String word : t.getBagOfWords().keySet()) {
                 if (p_given_not.containsKey(word)) {
                     p_not  += Math.log10(p_given_not.get(word)) * t.getBagOfWords().get(word);
@@ -136,9 +142,7 @@ public class Classifier {
                 classifiedNot++;
             }
         }
-        System.out.println("Within " + rotation.positiveTestSet.size() + " test tweets,");
-        System.out.println(classifiedPos + " tweets are classified as positive and "
-                + classifiedNeg + " tweets are classified as negative and "
-                + classifiedNot + " tweets are classified as notr");
+        System.out.println("Count\tpos\t\tneg\t\tnotr");
+        System.out.println(rotation.positiveTestSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
     }
 }
