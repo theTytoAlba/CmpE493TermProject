@@ -9,6 +9,7 @@ public class Main {
         readInformation();
         ArrayList<Rotation> rotations = createRotations();
         StatisticsHelper.createPositiveNegativeWordStatistics();
+        Classifier.multinomialBayes(rotations);
     }
 
     /**
