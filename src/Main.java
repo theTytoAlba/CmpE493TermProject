@@ -2,12 +2,13 @@ import java.util.ArrayList;
 
 public class Main {
     // Variables below are going to be set by readInformation function.
-    static ArrayList<Tweet> positiveSet, negativeSet, notrSet;
-    static ArrayList<String> positiveWords, negativeWords;
+    public static ArrayList<Tweet> positiveSet, negativeSet, notrSet;
+    public static ArrayList<String> positiveWords, negativeWords;
 
     public static void main(String[] args) {
         readInformation();
         ArrayList<Rotation> rotations = createRotations();
+        StatisticsHelper.createPositiveNegativeWordStatistics();
     }
 
     /**
