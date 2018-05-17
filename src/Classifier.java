@@ -102,8 +102,26 @@ public class Classifier {
         double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);
 
         // Classify!
+        classifySet(rotation.positiveTestSet, 1,
+                p_class_pos, p_given_pos, p_notpresent_pos,
+                p_class_neg, p_given_neg, p_notpresent_neg,
+                p_class_not, p_given_not, p_notpresent_not);
+        classifySet(rotation.negativeTestSet, -1,
+                p_class_pos, p_given_pos, p_notpresent_pos,
+                p_class_neg, p_given_neg, p_notpresent_neg,
+                p_class_not, p_given_not, p_notpresent_not);
+        classifySet(rotation.notrTestSet, 0,
+                p_class_pos, p_given_pos, p_notpresent_pos,
+                p_class_neg, p_given_neg, p_notpresent_neg,
+                p_class_not, p_given_not, p_notpresent_not);
+    }
+
+    private static void classifySet(ArrayList<Tweet> testSet, int realClass,
+                                    double p_class_pos, HashMap<String, Double> p_given_pos, double p_notpresent_pos,
+                                    double p_class_neg, HashMap<String, Double> p_given_neg, double p_notpresent_neg,
+                                    double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not) {
         int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
-        for (Tweet t : rotation.positiveTestSet) {
+        for (Tweet t : testSet) {
             // Calculate positive probability.
             double p_pos = Math.log10(p_class_pos);
             for (String word : t.getBagOfWords().keySet()) {
@@ -143,6 +161,6 @@ public class Classifier {
             }
         }
         System.out.println("Count\tpos\t\tneg\t\tnotr");
-        System.out.println(rotation.positiveTestSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
+        System.out.println(testSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
     }
 }
