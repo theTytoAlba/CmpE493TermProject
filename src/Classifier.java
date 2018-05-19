@@ -74,6 +74,7 @@ public class Classifier {
             }
         }
 
+
         // Find total unique word count.
         HashSet<String> words = new HashSet<>();
         for (String word : p_given_pos.keySet())
@@ -96,6 +97,8 @@ public class Classifier {
         for (String word : p_given_not.keySet()) {
             p_given_not.put(word, (p_given_not.get(word) + 1) / (wordCountNot + totalWordCount));
         }
+
+        HashSet<String> featureDictionary = MutualInformationHelper.getFeatures(p_given_pos,p_given_not,p_given_neg,words);
 
         double p_notpresent_not = 1.0 / (wordCountNot + totalWordCount);
         double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);

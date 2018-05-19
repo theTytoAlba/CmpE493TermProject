@@ -30,15 +30,15 @@ public class TextProcessingHelper {
         text = text.replaceAll(Pattern.quote("="), " ");
         text = text.replaceAll(Pattern.quote("$"), " ");
         text = text.replaceAll(Pattern.quote("%"), " ");
-        text = text.replaceAll(Pattern.quote("#"), " ");
+        //text = text.replaceAll(Pattern.quote("#"), " ");
         text = text.replaceAll(Pattern.quote("+"), " ");
         text = text.replaceAll("\n", " ");
         // Tokenize by space.
         ArrayList<String> tokens = new ArrayList<>();
         for (String token : text.split(" ")) {
             // Only accept tokens which are at least 2 chars, not integers and not twitter handles.
-            if (!token.isEmpty() && token.length() > 1 && !isInteger(token) && token.charAt(0) != '@') {
-                tokens.add(token.trim());
+            if (!token.isEmpty() && token.length() > 1 && !isInteger(token) && token.charAt(0) != '@' && token.charAt(0)!= '#') {
+                tokens.add(token.trim()); // buraya stem fonksiyonu gomecegiz
             }
         }
         return tokens;
