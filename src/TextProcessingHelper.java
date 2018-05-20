@@ -1,3 +1,8 @@
+import zemberek.morphology.TurkishMorphology;
+import zemberek.morphology.analysis.SingleAnalysis;
+import zemberek.morphology.analysis.WordAnalysis;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -13,7 +18,8 @@ public class TextProcessingHelper {
         // Remove all punctuation marks and new lines.
         text = text.replaceAll("\\.", " ");
         text = text.replaceAll(",", " ");
-        text = text.replaceAll("'", " ");
+        // We should delete words after ' sign.
+        //text = text.replaceAll("'", " ");
         text = text.replaceAll("\"", " ");
         text = text.replaceAll("/", " ");
         text = text.replaceAll("-", " ");
@@ -35,13 +41,46 @@ public class TextProcessingHelper {
         text = text.replaceAll("\n", " ");
         // Tokenize by space.
         ArrayList<String> tokens = new ArrayList<>();
+
+
+        WordAnalysis results;
+        SingleAnalysis singleAnalysis;
+
         for (String token : text.split(" ")) {
+
+            // If token contains ' sign, delete the words come after that sign.
+            if (token.contains("'")){
+                int index = token.indexOf("'");
+                token = token.substring(0,index);
+            }
+
             // Only accept tokens which are at least 2 chars, not integers and not twitter handles.
-            if (!token.isEmpty() && token.length() > 1 && !isInteger(token) && token.charAt(0) != '@' && token.charAt(0)!= '#') {
-                tokens.add(token.trim()); // buraya stem fonksiyonu gomecegiz
+            if (!token.isEmpty() && token.length() > 1 && !isInteger(token) && token.charAt(0) != '@' && token.charAt(0)!= '#' && !isStopword(token)) {
+                results = Main.morphology.analyze(token.trim());
+                if (results.getAnalysisResults().size()!=0){
+                    singleAnalysis = results.getAnalysisResults().get(0);
+                    tokens.add(singleAnalysis.getStem());
+                }else {
+                    tokens.add(token.trim()); // buraya stem fonksiyonu gomecegiz
+                }
+
             }
         }
         return tokens;
+    }
+
+    /**
+     *
+     * @param token
+     * @return Checks if token in stopword list,
+     * if it is a stopword returns true
+     */
+    private static boolean isStopword(String token) {
+        if (Main.stopwords.contains(token)){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     /**
@@ -56,4 +95,5 @@ public class TextProcessingHelper {
             return false;
         }
     }
+
 }

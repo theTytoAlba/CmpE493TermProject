@@ -100,7 +100,7 @@ public class Classifier {
         // defines the length of feature selection in the positive, negative and notr sets.
         int limit = 50;
         HashSet<String> featureDictionary = MutualInformationHelper.getFeatures(p_given_pos,p_given_not,p_given_neg,limit);
-
+        // TODO : use feature dictionary in classifying function ( IRMAK <3 thank youu)
         double p_notpresent_not = 1.0 / (wordCountNot + totalWordCount);
         double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);
         double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);

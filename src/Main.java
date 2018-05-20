@@ -1,16 +1,48 @@
+import zemberek.core.logging.Log;
+import zemberek.morphology.TurkishMorphology;
+import zemberek.morphology.analysis.AnalysisFormatters;
+import zemberek.morphology.analysis.SingleAnalysis;
+import zemberek.morphology.analysis.WordAnalysis;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Main {
     // Variables below are going to be set by readInformation function.
     public static ArrayList<Tweet> positiveSet, negativeSet, notrSet;
     public static ArrayList<String> positiveWords, negativeWords;
-
+    public static HashSet<String> stopwords;
+    public static TurkishMorphology morphology;
     public static void main(String[] args) {
         readInformation();
+        readStopwords();
+        createMorphology();
         ArrayList<Rotation> rotations = createRotations();
         StatisticsHelper.createPositiveNegativeWordStatistics();
         Classifier.multinomialBayes(rotations);
+
     }
+
+
+
+    /**
+     * Zemberek Library
+     * For Turkish morphological analysis
+     * https://drive.google.com/open?id=1JAz-ZuYr7bJtYnUid0wq4H0BrgCHbNz3
+     * from the link above you can download the library
+     *
+     * To add to IntelliJ platform, from Project Structure -> Modules -> Dependencies
+     * add zemberek-all.jar and all dependency jar files, adding module-jars is not necessary/
+     */
+    private static void createMorphology() {
+        try {
+            morphology  = TurkishMorphology.createWithDefaults();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Divides the existing set into 11 sets.
@@ -157,5 +189,8 @@ public class Main {
         positiveWords = IOHelper.readWords("Train/positive-words");
         negativeWords = IOHelper.readWords("Train/negative-words");
         System.out.println("Read " + positiveWords.size() + " positive, " + negativeWords.size() + " negative words.");
+    }
+    private static void readStopwords(){
+        stopwords = IOHelper.readWordsHashSet("Train/stopwords-tr.txt");
     }
 }

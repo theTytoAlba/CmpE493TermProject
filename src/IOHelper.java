@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class IOHelper {
 
@@ -34,6 +35,25 @@ public class IOHelper {
             String line;
             while ((line = br.readLine()) != null) {
                 words.add(line);
+            }
+        } catch (Exception e) {
+            System.out.println("Error while getting words from " + filePath);
+        }
+        return words;
+    }
+
+    /**
+     * Reads words from given file.
+     * The expected format is one word per line.
+     * Returns an HashSet of Strings.
+     * Written for getting stopwords from a file.
+     */
+    public static HashSet<String> readWordsHashSet(String filePath) {
+        HashSet<String> words = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                words.add(line.trim());
             }
         } catch (Exception e) {
             System.out.println("Error while getting words from " + filePath);
