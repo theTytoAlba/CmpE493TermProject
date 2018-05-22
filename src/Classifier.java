@@ -12,6 +12,10 @@ public class Classifier {
         for (Rotation rotation : rotations) {
             multinomialBayes(rotation);
         }
+        System.out.println("Avg f score " + StatisticsHelper.getFScores().toString());
+        System.out.println("AVG " + (StatisticsHelper.getFScores().get(0) +
+                StatisticsHelper.getFScores().get(1) +
+                StatisticsHelper.getFScores().get(2))/3);
     }
 
     /**
@@ -98,39 +102,55 @@ public class Classifier {
             p_given_not.put(word, (p_given_not.get(word) + 1) / (wordCountNot + totalWordCount));
         }
         // defines the length of feature selection in the positive, negative and notr sets.
-        int limit = 50;
-        HashSet<String> featureDictionary = MutualInformationHelper.getFeatures(p_given_pos,p_given_not,p_given_neg,limit);
+        int limit = 200;
+        ArrayList<ArrayList<String>> featureDictionary = MutualInformationHelper.getFeatures(p_given_pos,p_given_not,p_given_neg,limit);
         // TODO : use feature dictionary in classifying function ( IRMAK <3 thank youu)
         double p_notpresent_not = 1.0 / (wordCountNot + totalWordCount);
         double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);
         double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);
 
         // Classify!
-        classifySet(rotation.positiveTestSet, 1,
+        ArrayList<Integer> posRes = classifySet(rotation.positiveTestSet, 0,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
-                p_class_not, p_given_not, p_notpresent_not);
-        classifySet(rotation.negativeTestSet, -1,
+                p_class_not, p_given_not, p_notpresent_not, featureDictionary);
+        ArrayList<Integer> negRes = classifySet(rotation.negativeTestSet, 1,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
-                p_class_not, p_given_not, p_notpresent_not);
-        classifySet(rotation.notrTestSet, 0,
+                p_class_not, p_given_not, p_notpresent_not, featureDictionary);
+        ArrayList<Integer> notRes = classifySet(rotation.notrTestSet, 2,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
-                p_class_not, p_given_not, p_notpresent_not);
+                p_class_not, p_given_not, p_notpresent_not, featureDictionary);
+
+        double posP = posRes.get(0) / (double) (posRes.get(0) + (negRes.get(0) + notRes.get(0)));
+        double posR = posRes.get(0) / (double) (posRes.get(0) + (posRes.get(1) + posRes.get(2)));
+
+        double negP = negRes.get(1) / (double) (negRes.get(1) + (posRes.get(1) + notRes.get(1)));
+        double negR = negRes.get(1) / (double) (negRes.get(1) + (negRes.get(0) + negRes.get(2)));
+
+        double notP = notRes.get(2) / (double) (notRes.get(2) + (posRes.get(2) + negRes.get(2)));
+        double notR = notRes.get(2) / (double) (notRes.get(2) + (notRes.get(0) + notRes.get(1)));
+
+        StatisticsHelper.posF.add(2*posP*posR / (posP + posR));
+        StatisticsHelper.negF.add(2*negP*negR / (negP + negR));
+        StatisticsHelper.notF.add(2*notP*notR / (notP + notR));
     }
 
-    private static void classifySet(ArrayList<Tweet> testSet, int realClass,
+    private static ArrayList<Integer> classifySet(ArrayList<Tweet> testSet, int realClass,
                                     double p_class_pos, HashMap<String, Double> p_given_pos, double p_notpresent_pos,
                                     double p_class_neg, HashMap<String, Double> p_given_neg, double p_notpresent_neg,
-                                    double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not) {
+                                    double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not, ArrayList<ArrayList<String>> featureDictionary) {
         int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
         for (Tweet t : testSet) {
             // Calculate positive probability.
             double p_pos = Math.log10(p_class_pos);
             for (String word : t.getBagOfWords().keySet()) {
                 if (p_given_pos.containsKey(word)) {
-                    p_pos += Math.log10(p_given_pos.get(word)) * t.getBagOfWords().get(word);
+                    p_pos +=
+                            Math.log10(p_given_pos.get(word) + (featureDictionary.get(0).contains(word) || Main.positiveSet.contains(word) ?
+                                    (1-p_given_pos.get(word))*0.50:0))
+                                    * t.getBagOfWords().get(word);
                 } else {
                     p_pos += Math.log10(p_notpresent_pos);
                 }
@@ -140,7 +160,8 @@ public class Classifier {
             double p_neg = Math.log10(p_class_neg);
             for (String word : t.getBagOfWords().keySet()) {
                 if (p_given_neg.containsKey(word)) {
-                    p_neg += Math.log10(p_given_neg.get(word)) * t.getBagOfWords().get(word);
+                    p_neg += Math.log10(p_given_neg.get(word) + (featureDictionary.get(1).contains(word)|| Main.negativeSet.contains(word)?
+                            (1-p_given_neg.get(word))*0.50:0)) * t.getBagOfWords().get(word);
                 } else {
                     p_neg += Math.log10(p_notpresent_neg);
                 }
@@ -150,7 +171,8 @@ public class Classifier {
             double p_not = Math.log10(p_class_not);
             for (String word : t.getBagOfWords().keySet()) {
                 if (p_given_not.containsKey(word)) {
-                    p_not  += Math.log10(p_given_not.get(word)) * t.getBagOfWords().get(word);
+                    p_not  += Math.log10(p_given_not.get(word) + (featureDictionary.get(2).contains(word) ?
+                            (1-p_given_not.get(word))*0.50:0)) * t.getBagOfWords().get(word);
                 } else {
                     p_not += Math.log10(p_notpresent_not);
                 }
@@ -164,7 +186,28 @@ public class Classifier {
                 classifiedNot++;
             }
         }
-        System.out.println("Count\tpos\t\tneg\t\tnotr");
-        System.out.println(testSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
+        ArrayList<Integer> res = new ArrayList<>();
+        res.add(classifiedPos);
+        res.add(classifiedNeg);
+        res.add(classifiedNot);
+        return res;
+/*
+        double posP, posR, negP, negR, notP, notR;
+        if (realClass == 0) {
+            posP = classifiedPos / (double)testSet.size();
+            posR = classifiedPos / (double)(testSet.size()-classifiedPos);
+            StatisticsHelper.posF.add(2*posP*posR / (posP + posR));
+        } else if (realClass == 1) {
+            negP = classifiedNeg / (double)testSet.size();
+            negR = classifiedNeg / (double)(testSet.size()-classifiedNeg);
+            StatisticsHelper.negF.add(2*negP*negR / (negP + negR));
+        } else {
+            notP = classifiedNot / (double)testSet.size();
+            notR = classifiedNot / (double)(testSet.size()-classifiedNot);
+            StatisticsHelper.notF.add(2*notP*notR / (notP + notR));
+        }
+*/
+        //System.out.println("Count\tpos\t\tneg\t\tnotr");
+        //System.out.println(testSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
     }
 }

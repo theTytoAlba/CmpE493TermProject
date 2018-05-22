@@ -15,6 +15,14 @@ public class TextProcessingHelper {
     public static ArrayList<String> tokenizeText(String text) {
         // Make text lowercase.
         text = text.toLowerCase();
+        // Turkish chars.
+        text = text.replaceAll("ü", "u");
+        text = text.replaceAll("ı", "i");
+        text = text.replaceAll("ş", "s");
+        text = text.replaceAll("ğ", "g");
+        text = text.replaceAll("ç", "c");
+
+
         // Remove all punctuation marks and new lines.
         text = text.replaceAll("\\.", " ");
         text = text.replaceAll(",", " ");

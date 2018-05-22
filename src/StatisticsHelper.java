@@ -250,4 +250,36 @@ public class StatisticsHelper {
         System.out.println(Arrays.toString(tweetStats[1]));
 
     }
+
+    public static ArrayList<Double> posF = new ArrayList<>();
+    public static ArrayList<Double> negF = new ArrayList<>();
+    public static ArrayList<Double> notF = new ArrayList<>();
+
+    public static ArrayList<Double> getFScores() {
+        ArrayList<Double> res = new ArrayList();
+        double sum = 0;
+        for (double d : posF) {
+            sum += d;
+        }
+        sum /= posF.size();
+        res.add(sum);
+
+        sum = 0;
+        for (double d : negF) {
+            sum += d;
+        }
+        sum /= negF.size();
+        res.add(sum);
+
+        sum = 0;
+        for (double d : notF) {
+            sum += d;
+        }
+        sum /= notF.size();
+        res.add(sum);
+
+        return res;
+    }
+
+
 }

@@ -5,8 +5,8 @@ import static java.util.Collections.reverseOrder;
 
 public class MutualInformationHelper {
     //protected static final int LIMIT=50;
-    public static HashSet<String> getFeatures(HashMap<String, Double> p_given_pos, HashMap<String, Double> p_given_not, HashMap<String, Double> p_given_neg, int LIMIT) {
-        HashSet<String> result = new HashSet<>();
+    public static ArrayList<ArrayList<String>> getFeatures(HashMap<String, Double> p_given_pos, HashMap<String, Double> p_given_not, HashMap<String, Double> p_given_neg, int LIMIT) {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
 
 
         ArrayList<String> pos_features = new ArrayList<>();
@@ -55,6 +55,7 @@ public class MutualInformationHelper {
 
         }
 
+        /*
         System.out.println("POSITIVE FEATURE LIST "+pos_features.size());
         for (int i = 0; i <pos_features.size() ; i++) {
             System.out.println(pos_features.get(i));
@@ -72,6 +73,10 @@ public class MutualInformationHelper {
             System.out.println(not_features.get(i));
             result.add(not_features.get(i));
         }
+        */
+        result.add(pos_features);
+        result.add(neg_features);
+        result.add(not_features);
 
         return result;
     }
