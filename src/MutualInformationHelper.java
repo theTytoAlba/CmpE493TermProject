@@ -4,7 +4,15 @@ import java.util.stream.Collectors;
 import static java.util.Collections.reverseOrder;
 
 public class MutualInformationHelper {
-    //protected static final int LIMIT=50;
+
+    /**
+     * Creates Featured Word list for positive, negative and notr sets
+     * @param p_given_pos given probability of positive word Hashmap
+     * @param p_given_not given probability of notr word Hashmap
+     * @param p_given_neg given probability of negative word Hashmap
+     * @param LIMIT integer value, look up value, i.e. Limit = 50, checks top 50 words having highest probabilities.
+     * @return List of featured words. 
+     */
     public static ArrayList<ArrayList<String>> getFeatures(HashMap<String, Double> p_given_pos, HashMap<String, Double> p_given_not, HashMap<String, Double> p_given_neg, int LIMIT) {
         ArrayList<ArrayList<String>> result = new ArrayList<>();
 
@@ -42,38 +50,45 @@ public class MutualInformationHelper {
             not_fifty.add(sorted_map_not.get(i).getKey());
         }
 
-        for (int i = 0; i < LIMIT ; i++) {
-            if (!neg_fifty.contains(pos_fifty.get(i)) && !not_fifty.contains(pos_fifty.get(i))){
+        for (int i = 0; i < LIMIT; i++) {
+            if (!neg_fifty.contains(pos_fifty.get(i)) && !not_fifty.contains(pos_fifty.get(i))) {
                 pos_features.add(pos_fifty.get(i));
             }
-            if (!pos_fifty.contains(neg_fifty.get(i)) && !not_fifty.contains(neg_fifty.get(i))){
+            if (!pos_fifty.contains(neg_fifty.get(i)) && !not_fifty.contains(neg_fifty.get(i))) {
                 neg_features.add(neg_fifty.get(i));
             }
-            if (!pos_fifty.contains(not_fifty.get(i)) && !neg_fifty.contains(not_fifty.get(i))){
+            if (!pos_fifty.contains(not_fifty.get(i)) && !neg_fifty.contains(not_fifty.get(i))) {
                 not_features.add(not_fifty.get(i));
             }
 
         }
 
-        /*
-        System.out.println("POSITIVE FEATURE LIST "+pos_features.size());
-        for (int i = 0; i <pos_features.size() ; i++) {
-            System.out.println(pos_features.get(i));
-            result.add(pos_features.get(i));
-        }
+        /**
+         * Prints featured words in given sets.
+         *
 
-        System.out.println("\nNEGATIVE FEATURE LIST "+neg_features.size());
-        for (int i = 0; i <neg_features.size() ; i++) {
-            System.out.println(neg_features.get(i));
-            result.add(neg_features.get(i));
-        }
+            System.out.println("POSITIVE FEATURE LIST " + pos_features.size());
 
-        System.out.println("\nNOTR FEATURE LIST "+not_features.size());
-        for (int i = 0; i <not_features.size() ; i++) {
-            System.out.println(not_features.get(i));
-            result.add(not_features.get(i));
-        }
-        */
+            for (int i = 0; i < pos_features.size(); i++) {
+
+                System.out.println(pos_features.get(i));
+
+                result.add(pos_features.get(i));
+            }
+
+            System.out.println("\nNEGATIVE FEATURE LIST " + neg_features.size());
+            for (int i = 0; i < neg_features.size(); i++) {
+                System.out.println(neg_features.get(i));
+                result.add(neg_features.get(i));
+            }
+
+            System.out.println("\nNOTR FEATURE LIST " + not_features.size());
+            for (int i = 0; i < not_features.size(); i++) {
+                System.out.println(not_features.get(i));
+                result.add(not_features.get(i));
+            }
+
+         */
         result.add(pos_features);
         result.add(neg_features);
         result.add(not_features);

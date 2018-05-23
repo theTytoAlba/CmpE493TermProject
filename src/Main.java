@@ -40,7 +40,7 @@ public class Main {
      * from the link above you can download the library
      *
      * To add to IntelliJ platform, from Project Structure -> Modules -> Dependencies
-     * add zemberek-all.jar and all dependency jar files, adding module-jars is not necessary/
+     * add zemberek-all.jar and all dependency jar files, adding module-jars is not necessary.
      */
     private static void createMorphology() {
         try {
@@ -205,11 +205,18 @@ public class Main {
             readInput();
         }
     }
+
+    /**
+     * Reads input file given in demo session
+     */
     private static void readInput(){
         inputData = IOHelper.readInput(INPUT_DATA_FILE);
         System.out.println("Input data has been retrieved");
     }
 
+    /**
+     * Reads stopwords which needs to be removed in preprocessing phase
+     */
     private static void readStopwords(){
         stopwords = IOHelper.readWordsHashSet("Train/stopwords-tr.txt");
     }
