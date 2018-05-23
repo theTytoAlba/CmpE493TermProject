@@ -4,6 +4,7 @@ import zemberek.morphology.analysis.AnalysisFormatters;
 import zemberek.morphology.analysis.SingleAnalysis;
 import zemberek.morphology.analysis.WordAnalysis;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,6 +15,9 @@ public class Main {
     public static ArrayList<String> positiveWords, negativeWords;
     public static HashSet<String> stopwords;
     public static TurkishMorphology morphology;
+
+    public static final String INPUT_DATA_FILE = "input.txt";
+
     public static void main(String[] args) {
         readInformation();
         readStopwords();
@@ -189,9 +193,14 @@ public class Main {
         positiveWords = IOHelper.readWords("Train/positive-words");
         negativeWords = IOHelper.readWords("Train/negative-words");
         System.out.println("Read " + positiveWords.size() + " positive, " + negativeWords.size() + " negative words.");
+
+        if (new File(INPUT_DATA_FILE).exists()){
+            readInput();
+        }
     }
     private static void readInput(){
-        inputData = IOHelper.readTweets("input.txt",0);
+        inputData = IOHelper.readInput(INPUT_DATA_FILE);
+        System.out.println("Input data has been retrieved");
     }
 
     private static void readStopwords(){

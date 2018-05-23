@@ -30,8 +30,17 @@ public class IOHelper {
      *
      *
      */
-    public static ArrayList<String> readInput(){
-        return null;
+    public static ArrayList<Tweet> readInput(String filePath){
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                tweets.add(new Tweet(line));
+            }
+        } catch (Exception e) {
+            System.out.println("Error while getting tweets from " + filePath);
+        }
+        return tweets;
     }
 
 
