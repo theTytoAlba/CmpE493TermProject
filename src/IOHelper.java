@@ -51,8 +51,8 @@ public class IOHelper {
      */
     public static void writeResults(String filePath, ArrayList<Integer> results){
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
-            for (Integer i: results){
-                bw.write(i);
+            for (Integer i : results){
+                bw.write(i.toString());
                 bw.newLine();
             }
             bw.flush();
@@ -63,6 +63,9 @@ public class IOHelper {
         }
     }
 
+    /**
+     * Writes the text of given tweets to create an input file for testing purposes.
+     */
     public static void writeTweets(String filePath, ArrayList<Tweet> tweets){
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
             for (Tweet t: tweets){
