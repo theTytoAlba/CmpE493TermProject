@@ -289,10 +289,12 @@ public class StatisticsHelper {
             }
             System.out.println();
         }
-        System.out.println("Positive word count stats,Bir tweette bir tane pozitif kelime bulunanlar, iki tane olanlar, 3 tane olanlar 3 ve ustu..");
-        System.out.println(Arrays.toString(tweetStats[0]));
-        System.out.println("Negative word count stats,Bir tweette bir tane negative kelime bulunanlar, iki tane olanlar, 3 tane olanlar 3 ve ustu..");
-        System.out.println(Arrays.toString(tweetStats[1]));
+
+        System.out.println("Per Tweet :");
+        System.out.println("Single pos word , Double pos words, Triple pos words, More pos words : ");
+        System.out.println("--> " + Arrays.toString(tweetStats[0]));
+        System.out.println("Single neg word , Double neg words, Triple neg words, More neg words : ");
+        System.out.println("--> " + Arrays.toString(tweetStats[1]));
 
     }
 
