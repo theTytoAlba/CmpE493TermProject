@@ -79,13 +79,9 @@ public class Classifier {
 
 
         // Find total unique word count.
-        HashSet<String> words = new HashSet<>();
-        for (String word : p_given_pos.keySet())
-            words.add(word);
-        for (String word : p_given_neg.keySet())
-            words.add(word);
-        for (String word : p_given_not.keySet())
-            words.add(word);
+        HashSet<String> words = new HashSet<>(p_given_pos.keySet());
+        words.addAll(p_given_neg.keySet());
+        words.addAll(p_given_not.keySet());
         int totalWordCount = words.size();
 
         // Finalize probabilities.
