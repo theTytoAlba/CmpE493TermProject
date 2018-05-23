@@ -1,8 +1,6 @@
-import zemberek.morphology.TurkishMorphology;
 import zemberek.morphology.analysis.SingleAnalysis;
 import zemberek.morphology.analysis.WordAnalysis;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -11,6 +9,7 @@ public class TextProcessingHelper {
     /**
      * Removes punctuation.
      * Removes twitter handles (for example, @twitterhandle does not have a weight on category decision).
+     * Removes twitter hashtags.
      */
     public static ArrayList<String> tokenizeText(String text) {
         // Make text lowercase.
@@ -22,12 +21,9 @@ public class TextProcessingHelper {
         text = text.replaceAll("ğ", "g");
         text = text.replaceAll("ç", "c");
 
-
         // Remove all punctuation marks and new lines.
         text = text.replaceAll("\\.", " ");
         text = text.replaceAll(",", " ");
-        // We should delete words after ' sign.
-        //text = text.replaceAll("'", " ");
         text = text.replaceAll("\"", " ");
         text = text.replaceAll("/", " ");
         text = text.replaceAll("-", " ");
@@ -44,34 +40,31 @@ public class TextProcessingHelper {
         text = text.replaceAll(Pattern.quote("="), " ");
         text = text.replaceAll(Pattern.quote("$"), " ");
         text = text.replaceAll(Pattern.quote("%"), " ");
-        //text = text.replaceAll(Pattern.quote("#"), " ");
         text = text.replaceAll(Pattern.quote("+"), " ");
         text = text.replaceAll("\n", " ");
         // Tokenize by space.
         ArrayList<String> tokens = new ArrayList<>();
 
-
         WordAnalysis results;
         SingleAnalysis singleAnalysis;
 
         for (String token : text.split(" ")) {
-
-            // If token contains ' sign, delete the words come after that sign.
+            // If token contains ' sign, delete the part coming after the sign.
             if (token.contains("'")){
                 int index = token.indexOf("'");
                 token = token.substring(0,index);
             }
 
-            // Only accept tokens which are at least 2 chars, not integers and not twitter handles.
+            // Only accept tokens which are at least 2 chars, not integers, not twitter handles and not hashtags.
             if (!token.isEmpty() && token.length() > 1 && !isInteger(token) && token.charAt(0) != '@' && token.charAt(0)!= '#' && !isStopword(token)) {
+                // Analyze the token morphologically and use the stemmed version if possible.
                 results = Main.morphology.analyze(token.trim());
                 if (results.getAnalysisResults().size()!=0){
                     singleAnalysis = results.getAnalysisResults().get(0);
                     tokens.add(singleAnalysis.getStem());
-                }else {
-                    tokens.add(token.trim()); // buraya stem fonksiyonu gomecegiz
+                } else {
+                    tokens.add(token.trim());
                 }
-
             }
         }
         return tokens;
@@ -86,7 +79,7 @@ public class TextProcessingHelper {
     private static boolean isStopword(String token) {
         if (Main.stopwords.contains(token)){
             return true;
-        }else {
+        } else {
             return false;
         }
     }
