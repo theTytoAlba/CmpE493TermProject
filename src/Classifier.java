@@ -345,7 +345,6 @@ public class Classifier {
                 }
             }
 
-            //bu iflerin icinde tweet create edip result listeye atip, iohelper da bastircan
             if (p_pos > p_neg && p_pos > p_not) {
                 classifiedPos++;
             } else if (p_neg > p_not) {
@@ -359,22 +358,6 @@ public class Classifier {
         res.add(classifiedNeg);
         res.add(classifiedNot);
         return res;
-/*
-        double posP, posR, negP, negR, notP, notR;
-        if (realClass == 0) {
-            posP = classifiedPos / (double)testSet.size();
-            posR = classifiedPos / (double)(testSet.size()-classifiedPos);
-            StatisticsHelper.posF.add(2*posP*posR / (posP + posR));
-        } else if (realClass == 1) {
-            negP = classifiedNeg / (double)testSet.size();
-            negR = classifiedNeg / (double)(testSet.size()-classifiedNeg);
-            StatisticsHelper.negF.add(2*negP*negR / (negP + negR));
-        } else {
-            notP = classifiedNot / (double)testSet.size();
-            notR = classifiedNot / (double)(testSet.size()-classifiedNot);
-            StatisticsHelper.notF.add(2*notP*notR / (notP + notR));
-        }
-*/
         //System.out.println("Count\tpos\t\tneg\t\tnotr");
         //System.out.println(testSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
     }
