@@ -296,11 +296,19 @@ public class Classifier {
         return result;
     }
 
+    /*
+        asfdasf
+     */
     private static ArrayList<Integer> classifySet(ArrayList<Tweet> testSet, int realClass,
                                                   double p_class_pos, HashMap<String, Double> p_given_pos, double p_notpresent_pos,
                                                   double p_class_neg, HashMap<String, Double> p_given_neg, double p_notpresent_neg,
                                                   double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not, ArrayList<ArrayList<String>> featureDictionary) {
         int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
+
+        int c = 1, d = 234;
+        c += d;
+        d += c;
+        System.out.println(d);
         for (Tweet t : testSet) {
             // Calculate positive probability.
             double p_pos = Math.log10(p_class_pos);
