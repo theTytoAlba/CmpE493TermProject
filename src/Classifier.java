@@ -178,6 +178,7 @@ public class Classifier {
                 }
             }
 
+            //bu iflerin icinde tweet create edip result listeye atip, iohelper da bastircan
             if (p_pos > p_neg && p_pos > p_not) {
                 classifiedPos++;
             } else if (p_neg > p_not) {

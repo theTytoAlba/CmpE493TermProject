@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -22,6 +24,21 @@ public class IOHelper {
             System.out.println("Error while getting tweets from " + filePath);
         }
         return tweets;
+    }
+
+    public static void writeTweets(String filePath, ArrayList<Tweet> tweets){
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
+            for (Tweet t: tweets){
+                bw.write(t.category);
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }catch (Exception e){
+            System.out.println("Error while writing tweets to " + filePath);
+        }finally {
+            System.out.println("Writing Process Completed : " + filePath);
+        }
     }
 
     /**
