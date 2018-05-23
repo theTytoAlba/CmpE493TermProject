@@ -13,6 +13,10 @@ public class Tweet {
         this.category = category;
     }
 
+    public Tweet (String text) {
+        this.text = text;
+    }
+
     /**
      * Returns the bagOfWords map. Creates it if not created yet.
      * Map is in form <word: # of times or occurs>
