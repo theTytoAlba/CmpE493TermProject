@@ -27,8 +27,9 @@ public class IOHelper {
     }
 
     /**
-     *
-     *
+     * Reads input for demo
+     * @param filePath of the given file
+     * @return tweet list, only has text
      */
     public static ArrayList<Tweet> readInput(String filePath){
         ArrayList<Tweet> tweets = new ArrayList<>();
@@ -43,7 +44,11 @@ public class IOHelper {
         return tweets;
     }
 
-
+    /**
+     * Write to a file
+     * @param filePath path of the file going to be written in
+     * @param results Sentiment list of calculated tweets
+     */
     public static void writeResults(String filePath, ArrayList<Integer> results){
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
             for (Integer i: results){

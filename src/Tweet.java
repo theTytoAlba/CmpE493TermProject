@@ -13,6 +13,10 @@ public class Tweet {
         this.category = category;
     }
 
+    /**
+     * Constructor for reading input tweets (For demo)
+     * @param text : read from input file
+     */
     public Tweet (String text) {
         this.text = text;
     }

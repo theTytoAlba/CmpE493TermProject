@@ -4,6 +4,48 @@ import java.util.HashMap;
 
 public class StatisticsHelper {
 
+
+
+    public static ArrayList<Double> posF = new ArrayList<>();
+    public static ArrayList<Double> negF = new ArrayList<>();
+    public static ArrayList<Double> notF = new ArrayList<>();
+
+    /**
+     * F score calculator
+     * @return F scores of positives, negatives and notrs
+     */
+    public static ArrayList<Double> getFScores() {
+        ArrayList<Double> res = new ArrayList();
+        double sum = 0;
+        for (double d : posF) {
+            sum += d;
+        }
+        sum /= posF.size();
+        res.add(sum);
+
+        sum = 0;
+        for (double d : negF) {
+            sum += d;
+        }
+        sum /= negF.size();
+        res.add(sum);
+
+        sum = 0;
+        for (double d : notF) {
+            sum += d;
+        }
+        sum /= notF.size();
+        res.add(sum);
+
+        return res;
+    }
+
+
+
+    /**
+     * A helper method for us to see word distributions accross tweets having different sentiments
+     * Not used in calculation
+     */
     public static void createPositiveNegativeWordStatistics(){
 
         HashMap<Tweet,Integer> positiveWordCount = new HashMap<>();
@@ -15,28 +57,31 @@ public class StatisticsHelper {
 
         HashMap<Tweet,Integer> positiveWordCountNotrSet = new HashMap<>();
         HashMap<Tweet,Integer> negativeWordCountNotrSet = new HashMap<>();
-        int[][] stats = new int[3][4];
-        /*
-        stats[0] = positive set
-        stats[1] = negative set
-        stats[2] = notr set
-
-        stats[][]                   not                     not
-                        contains    contains    contains    contains
-                        positive    positive    negative    negative
-        positive set        -           -           -           -
-        negative set        -           -           -           -
-        notr set            -           -           -           -
-
-        */
-        int[][] tweetStats = new int[3][4];
-        /*
-                                            contains 1      contains 2      contains 3      contains more than 3
-                                            positive word   positive word   positive word   positive word
-        tweetStats[0] = positive set            -               -               -               -
-        tweetStats[1] = negative set            -               -               -               -
-        tweetStats[2] = notr set                -               -               -               -
+        /**
+         * stats[0] = positive set
+         * stats[1] = negative set
+         * stats[2] = notr set
+         *
+         * stats[][]                   not                     not
+         * contains    contains    contains    contains
+         * positive    positive    negative    negative
+         * positive set        -           -           -           -
+         * negative set        -           -           -           -
+         * notr set            -           -           -           -
+         *
          */
+        int[][] stats = new int[3][4];
+
+
+        /**
+         *                                    contains 1      contains 2      contains 3      contains more than 3
+         *                                    positive word   positive word   positive word   positive word
+         * tweetStats[0] = positive set            -               -               -               -
+         * tweetStats[1] = negative set            -               -               -               -
+         * tweetStats[2] = notr set                -               -               -               -
+         */
+        int[][] tweetStats = new int[3][4];
+
         for(Tweet t : Main.negativeSet){
             HashMap<String,Integer> map = t.getBagOfWords();
             boolean hasPositive = false;
@@ -249,36 +294,6 @@ public class StatisticsHelper {
         System.out.println("Negative word count stats,Bir tweette bir tane negative kelime bulunanlar, iki tane olanlar, 3 tane olanlar 3 ve ustu..");
         System.out.println(Arrays.toString(tweetStats[1]));
 
-    }
-
-    public static ArrayList<Double> posF = new ArrayList<>();
-    public static ArrayList<Double> negF = new ArrayList<>();
-    public static ArrayList<Double> notF = new ArrayList<>();
-
-    public static ArrayList<Double> getFScores() {
-        ArrayList<Double> res = new ArrayList();
-        double sum = 0;
-        for (double d : posF) {
-            sum += d;
-        }
-        sum /= posF.size();
-        res.add(sum);
-
-        sum = 0;
-        for (double d : negF) {
-            sum += d;
-        }
-        sum /= negF.size();
-        res.add(sum);
-
-        sum = 0;
-        for (double d : notF) {
-            sum += d;
-        }
-        sum /= notF.size();
-        res.add(sum);
-
-        return res;
     }
 
 
