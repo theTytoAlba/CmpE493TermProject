@@ -26,6 +26,15 @@ public class IOHelper {
         return tweets;
     }
 
+    /**
+     *
+     *
+     */
+    public static ArrayList<String> readInput(){
+        return null;
+    }
+
+
     public static void writeTweets(String filePath, ArrayList<Tweet> tweets){
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
             for (Tweet t: tweets){

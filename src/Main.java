@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 public class Main {
     // Variables below are going to be set by readInformation function.
-    public static ArrayList<Tweet> positiveSet, negativeSet, notrSet;
+    public static ArrayList<Tweet> positiveSet, negativeSet, notrSet,inputData;
     public static ArrayList<String> positiveWords, negativeWords;
     public static HashSet<String> stopwords;
     public static TurkishMorphology morphology;
@@ -190,6 +190,10 @@ public class Main {
         negativeWords = IOHelper.readWords("Train/negative-words");
         System.out.println("Read " + positiveWords.size() + " positive, " + negativeWords.size() + " negative words.");
     }
+    private static void readInput(){
+        inputData = IOHelper.readTweets("input.txt",0);
+    }
+
     private static void readStopwords(){
         stopwords = IOHelper.readWordsHashSet("Train/stopwords-tr.txt");
     }
