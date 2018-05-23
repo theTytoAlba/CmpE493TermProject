@@ -115,6 +115,9 @@ public class Classifier {
                 p_class_neg, p_given_neg, p_notpresent_neg,
                 p_class_not, p_given_not, p_notpresent_not, featureDictionary);
 
+        int resultCounts[] = countClassifications(results);
+        System.out.println("Classified " + resultCounts[0] + " as positive, " + resultCounts[1] + " as negative, " + resultCounts[2] + " as notr.");
+
         IOHelper.writeResults(Main.OUTPUT_DATA_FILE, results);
     }
 
@@ -206,43 +209,75 @@ public class Classifier {
         int limit = 200;
         ArrayList<ArrayList<String>> featureDictionary = MutualInformationHelper.getFeatures(p_given_pos, p_given_not, p_given_neg, limit);
 
+        // Default probability for the words that are not present in the training.
         double p_notpresent_not = 1.0 / (wordCountNot + totalWordCount);
         double p_notpresent_neg = 1.0 / (wordCountNeg + totalWordCount);
         double p_notpresent_pos = 1.0 / (wordCountPos + totalWordCount);
 
         // Classify!
-        ArrayList<Integer> posRes = classifySet(rotation.positiveTestSet, 0,
+        ArrayList<Integer> posResAll = classifySet(rotation.positiveTestSet,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
                 p_class_not, p_given_not, p_notpresent_not, featureDictionary);
-        ArrayList<Integer> negRes = classifySet(rotation.negativeTestSet, 1,
+        ArrayList<Integer> negResAll = classifySet(rotation.negativeTestSet,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
                 p_class_not, p_given_not, p_notpresent_not, featureDictionary);
-        ArrayList<Integer> notRes = classifySet(rotation.notrTestSet, 2,
+        ArrayList<Integer> notResAll = classifySet(rotation.notrTestSet,
                 p_class_pos, p_given_pos, p_notpresent_pos,
                 p_class_neg, p_given_neg, p_notpresent_neg,
                 p_class_not, p_given_not, p_notpresent_not, featureDictionary);
 
-        double posP = posRes.get(0) / (double) (posRes.get(0) + (negRes.get(0) + notRes.get(0)));
-        double posR = posRes.get(0) / (double) (posRes.get(0) + (posRes.get(1) + posRes.get(2)));
+        // 3 element arrays: [# of pos, # of neg, # of not]
+        int posRes[] = countClassifications(posResAll);
+        int negRes[] = countClassifications(negResAll);
+        int notRes[] = countClassifications(notResAll);
 
-        double negP = negRes.get(1) / (double) (negRes.get(1) + (posRes.get(1) + notRes.get(1)));
-        double negR = negRes.get(1) / (double) (negRes.get(1) + (negRes.get(0) + negRes.get(2)));
+        // Calculate precision and recall.
+        double posP = posRes[0] / (double) (posRes[0] + (negRes[0] + notRes[0]));
+        double posR = posRes[0] / (double) (posRes[0] + (posRes[1] + posRes[2]));
 
-        double notP = notRes.get(2) / (double) (notRes.get(2) + (posRes.get(2) + negRes.get(2)));
-        double notR = notRes.get(2) / (double) (notRes.get(2) + (notRes.get(0) + notRes.get(1)));
+        double negP = negRes[1] / (double) (negRes[1] + (posRes[1] + notRes[1]));
+        double negR = negRes[1] / (double) (negRes[1] + (negRes[0] + negRes[2]));
 
+        double notP = notRes[2] / (double) (notRes[2] + (posRes[2] + negRes[2]));
+        double notR = notRes[2] / (double) (notRes[2] + (notRes[0] + notRes[1]));
+
+        // Calculate f measures.
         StatisticsHelper.posF.add(2 * posP * posR / (posP + posR));
         StatisticsHelper.negF.add(2 * negP * negR / (negP + negR));
         StatisticsHelper.notF.add(2 * notP * notR / (notP + notR));
+    }
+
+    /**
+     * Takes in an arraylist of classification.
+     * A class is either 0, -1 or 1.
+     * Returns the counts of each in an array:
+     * [# of 1s, # of -1s, # of 0s]
+     */
+    private static int[] countClassifications (ArrayList<Integer> classification) {
+        int classes[] = new int[3];
+        classes[0] = classes[1] = classes[2] = 0;
+        for (int c : classification) {
+            switch (c) {
+                case 1:
+                    classes[0]++;
+                    break;
+                case -1:
+                    classes[1]++;
+                    break;
+                case 0:
+                    classes[2]++;
+                    break;
+            }
+        }
+        return classes;
     }
 
     private static ArrayList<Integer> classifySet(ArrayList<Tweet> testSet,
                                                   double p_class_pos, HashMap<String, Double> p_given_pos, double p_notpresent_pos,
                                                   double p_class_neg, HashMap<String, Double> p_given_neg, double p_notpresent_neg,
                                                   double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not, ArrayList<ArrayList<String>> featureDictionary) {
-        int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
         ArrayList<Integer> result = new ArrayList<>();
         for (Tweet t : testSet) {
             // Calculate positive probability.
@@ -283,74 +318,12 @@ public class Classifier {
             // Classify
             if (p_pos > p_neg && p_pos > p_not) {
                 result.add(1);
-                classifiedPos++;
             } else if (p_neg > p_not) {
                 result.add(-1);
-                classifiedNeg++;
             } else {
                 result.add(0);
-                classifiedNot++;
             }
         }
-        System.out.println("Classified " + classifiedPos + " as positive, " + classifiedNeg + " as negative, " + classifiedNot + " as notr.");
         return result;
-    }
-
-    private static ArrayList<Integer> classifySet(ArrayList<Tweet> testSet, int realClass,
-                                                  double p_class_pos, HashMap<String, Double> p_given_pos, double p_notpresent_pos,
-                                                  double p_class_neg, HashMap<String, Double> p_given_neg, double p_notpresent_neg,
-                                                  double p_class_not, HashMap<String, Double> p_given_not, double p_notpresent_not, ArrayList<ArrayList<String>> featureDictionary) {
-        int classifiedPos = 0, classifiedNeg = 0, classifiedNot = 0;
-        for (Tweet t : testSet) {
-            // Calculate positive probability.
-            double p_pos = Math.log10(p_class_pos);
-            for (String word : t.getBagOfWords().keySet()) {
-                if (p_given_pos.containsKey(word)) {
-                    p_pos +=
-                            Math.log10(p_given_pos.get(word) + (featureDictionary.get(0).contains(word) || Main.positiveSet.contains(word) ?
-                                    (1 - p_given_pos.get(word)) * 0.50 : 0))
-                                    * t.getBagOfWords().get(word);
-                } else {
-                    p_pos += Math.log10(p_notpresent_pos);
-                }
-            }
-
-            // Calculate negative probability.
-            double p_neg = Math.log10(p_class_neg);
-            for (String word : t.getBagOfWords().keySet()) {
-                if (p_given_neg.containsKey(word)) {
-                    p_neg += Math.log10(p_given_neg.get(word) + (featureDictionary.get(1).contains(word) || Main.negativeSet.contains(word) ?
-                            (1 - p_given_neg.get(word)) * 0.50 : 0)) * t.getBagOfWords().get(word);
-                } else {
-                    p_neg += Math.log10(p_notpresent_neg);
-                }
-            }
-
-            // Calculate notr probability.
-            double p_not = Math.log10(p_class_not);
-            for (String word : t.getBagOfWords().keySet()) {
-                if (p_given_not.containsKey(word)) {
-                    p_not += Math.log10(p_given_not.get(word) + (featureDictionary.get(2).contains(word) ?
-                            (1 - p_given_not.get(word)) * 0.50 : 0)) * t.getBagOfWords().get(word);
-                } else {
-                    p_not += Math.log10(p_notpresent_not);
-                }
-            }
-
-            if (p_pos > p_neg && p_pos > p_not) {
-                classifiedPos++;
-            } else if (p_neg > p_not) {
-                classifiedNeg++;
-            } else {
-                classifiedNot++;
-            }
-        }
-        ArrayList<Integer> res = new ArrayList<>();
-        res.add(classifiedPos);
-        res.add(classifiedNeg);
-        res.add(classifiedNot);
-        return res;
-        //System.out.println("Count\tpos\t\tneg\t\tnotr");
-        //System.out.println(testSet.size() + "\t\t" + classifiedPos + "\t\t" + classifiedNeg+ "\t\t" + classifiedNot);
     }
 }
