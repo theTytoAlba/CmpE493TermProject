@@ -44,17 +44,30 @@ public class IOHelper {
     }
 
 
-    public static void writeTweets(String filePath, ArrayList<Tweet> tweets){
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
-            for (Tweet t: tweets){
-                bw.write(t.category);
+    public static void writeResults(String filePath, ArrayList<Integer> results){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
+            for (Integer i: results){
+                bw.write(i);
                 bw.newLine();
             }
             bw.flush();
-            bw.close();
-        }catch (Exception e){
+        } catch (Exception e){
             System.out.println("Error while writing tweets to " + filePath);
-        }finally {
+        } finally {
+            System.out.println("Writing Process Completed : " + filePath);
+        }
+    }
+
+    public static void writeTweets(String filePath, ArrayList<Tweet> tweets){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))){
+            for (Tweet t: tweets){
+                bw.write(t.text);
+                bw.newLine();
+            }
+            bw.flush();
+        } catch (Exception e){
+            System.out.println("Error while writing tweets to " + filePath);
+        } finally {
             System.out.println("Writing Process Completed : " + filePath);
         }
     }

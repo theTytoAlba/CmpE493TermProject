@@ -11,12 +11,13 @@ import java.util.HashSet;
 
 public class Main {
     // Variables below are going to be set by readInformation function.
-    public static ArrayList<Tweet> positiveSet, negativeSet, notrSet,inputData;
+    public static ArrayList<Tweet> positiveSet, negativeSet, notrSet, inputData;
     public static ArrayList<String> positiveWords, negativeWords;
     public static HashSet<String> stopwords;
     public static TurkishMorphology morphology;
 
     public static final String INPUT_DATA_FILE = "input.txt";
+    public static final String OUTPUT_DATA_FILE = "output.txt";
 
     public static void main(String[] args) {
         readInformation();
@@ -25,7 +26,9 @@ public class Main {
         ArrayList<Rotation> rotations = createRotations();
         StatisticsHelper.createPositiveNegativeWordStatistics();
         Classifier.multinomialBayes(rotations);
-
+        if (new File(INPUT_DATA_FILE).exists()){
+            Classifier.multinomialBayes();
+        }
     }
 
 
@@ -186,6 +189,10 @@ public class Main {
         positiveSet = IOHelper.readTweets("Train/positive-train", 1);
         negativeSet = IOHelper.readTweets("Train/negative-train", -1);
         notrSet = IOHelper.readTweets("Train/notr-train", 0);
+
+        // Uncomment if you want to test.
+        //IOHelper.writeTweets(INPUT_DATA_FILE, notrSet);
+
         System.out.println("Read "
                 + positiveSet.size() + " positive, " + negativeSet.size() + " negative, " + notrSet.size() + " notr; "
                 + "total " + (positiveSet.size() + negativeSet.size() + notrSet.size()) + " tweets.");
